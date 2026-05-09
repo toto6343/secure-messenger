@@ -1,0 +1,87 @@
+/* Modern Dark Theme Variables */
+[data-theme='dark'] {
+    --primary-color: #3b82f6;
+    --primary-hover: #60a5fa;
+    --bg-main: #0f172a;
+    --bg-sidebar: #1e293b;
+    --bg-chat: #0f172a;
+    --text-main: #f1f5f9;
+    --text-muted: #94a3b8;
+    --border-color: #334155;
+    --accent-gradient: linear-gradient(135deg, #3b82f6 0%, #0ea5e9 100%);
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme='dark'] body, 
+[data-theme='dark'] .screen {
+    background-color: var(--bg-main);
+    color: var(--text-main);
+}
+
+[data-theme='dark'] .login-container {
+    background-color: var(--bg-sidebar);
+    border: 1px solid var(--border-color);
+}
+
+[data-theme='dark'] .input-group input,
+[data-theme='dark'] .search-bar input,
+[data-theme='dark'] #messageInput {
+    background-color: #0f172a;
+    color: var(--text-main);
+    border-color: var(--border-color);
+}
+
+[data-theme='dark'] .sidebar {
+    background-color: var(--bg-sidebar);
+    border-right-color: var(--border-color);
+}
+
+[data-theme='dark'] .sidebar-header,
+[data-theme='dark'] .sidebar-footer,
+[data-theme='dark'] .chat-header,
+[data-theme='dark'] .chat-input-container {
+    background-color: rgba(30, 41, 59, 0.8);
+    border-color: var(--border-color);
+}
+
+[data-theme='dark'] .icon-btn {
+    background-color: #334155;
+    color: var(--text-main);
+}
+
+[data-theme='dark'] .conversation-item:hover {
+    background-color: #334155;
+}
+
+[data-theme='dark'] .conversation-item.active {
+    background-color: #1e3a8a;
+}
+
+[data-theme='dark'] .message.received .message-content {
+    background-color: #334155;
+    color: var(--text-main);
+}
+
+[data-theme='dark'] .modal-content {
+    background-color: var(--bg-sidebar);
+    color: var(--text-main);
+}
+
+[data-theme='dark'] .modal-header {
+    background-color: #334155;
+    border-bottom-color: var(--border-color);
+}
+
+[data-theme='dark'] .user-item:hover {
+    background-color: #334155;
+}
+
+[data-theme='dark'] .security-badge {
+    background-color: rgba(59, 130, 246, 0.1);
+    color: #93c5fd;
+}
+
+[data-theme='dark'] ::-webkit-scrollbar-thumb {
+    background: #475569;
+}

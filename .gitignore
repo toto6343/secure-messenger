@@ -1,0 +1,22 @@
+# Dependency folders
+node_modules/
+
+# Env files (Secrets)
+.env
+.env.local
+
+# Backend uploads
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# Mobile expo files
+mobile/.expo/
+
+# Desktop build output
+desktop/dist/
+desktop/out/
+desktop/build/
+
+# OS files
+.DS_Store
+Thumbs.db

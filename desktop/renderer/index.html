@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' https://cdn.socket.io https://cdnjs.cloudflare.com; connect-src 'self' http://localhost:5000 ws://localhost:5000 https://cdn.socket.io; img-src 'self' data: https://api.dicebear.com http://localhost:5000;">
+    <title>DIAMOND</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="dark-theme.css">
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="screen">
+        <div class="login-container">
+            <div class="login-logo">
+                <div class="logo-icon">💎</div>
+                <h1>DIA<span style="color: var(--primary-color);">MOND</span></h1>
+                <p>Unbreakable & Eternal Security</p>
+            </div>
+
+            <div class="login-form">
+                <div class="input-group">
+                    <label>이메일</label>
+                    <input type="email" id="loginEmail" placeholder="이메일을 입력하세요">
+                </div>
+                <div class="input-group">
+                    <label>비밀번호</label>
+                    <input type="password" id="loginPassword" placeholder="비밀번호를 입력하세요">
+                </div>
+                <div style="text-align: right; margin-bottom: 15px;">
+                    <a href="#" id="showForgotPassword" style="font-size: 13px; color: var(--primary-color); text-decoration: none;">비밀번호를 잊으셨나요?</a>
+                </div>
+                <button class="btn-primary" id="loginBtn">로그인</button>
+                <div class="login-footer">
+                    <p>계정이 없으신가요? <a href="#" id="showRegister">회원가입</a></p>
+                </div>
+            </div>
+
+            <div class="security-badge">
+                <span>🛡️</span>
+                <span>모든 메시지는 종단간 암호화로 보호됩니다</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Screen -->
+    <div id="registerScreen" class="screen hidden">
+        <div class="login-container">
+            <div class="login-logo">
+                <div class="logo-icon">💎</div>
+                <h1>JOIN <span style="color: var(--primary-color);">DIAMOND</span></h1>
+                <p>Start your secure communication</p>
+            </div>
+
+            <div class="login-form">
+                <div class="input-group">
+                    <label>사용자 이름</label>
+                    <input type="text" id="registerUsername" placeholder="사용자 이름">
+                </div>
+                <div class="input-group">
+                    <label>이메일</label>
+                    <input type="email" id="registerEmail" placeholder="이메일">
+                </div>
+                <div class="input-group">
+                    <label>비밀번호</label>
+                    <input type="password" id="registerPassword" placeholder="비밀번호 (최소 6자)">
+                </div>
+                <div class="input-group">
+                    <label>비밀번호 확인</label>
+                    <input type="password" id="registerConfirmPassword" placeholder="비밀번호 확인">
+                </div>
+                <button class="btn-primary" id="registerBtn">회원가입</button>
+                <div class="login-footer">
+                    <p>이미 계정이 있으신가요? <a href="#" id="showLogin">로그인</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="mainApp" class="screen hidden">
+        <div class="app-container">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="sidebar-header">
+                    <h2>DIA<span style="color: var(--primary-color);">MOND</span></h2>
+                    <div style="display: flex; gap: 5px; align-items: center;">
+                        <button class="theme-toggle-btn" id="langToggleBtn" title="언어 변경" style="font-size: 16px;">🇰🇷</button>
+                        <button class="theme-toggle-btn" id="themeToggleBtn" title="테마 변경">🌙</button>
+                        <button class="icon-btn" id="newChatBtn" title="새 채팅" data-i18n-title="newChat">➕</button>
+                    </div>
+                </div>
+
+                <div class="sidebar-tabs">
+                    <button class="sidebar-tab active" id="tabConversations">대화</button>
+                    <button class="sidebar-tab" id="tabFriends">친구</button>
+                </div>
+                
+                <div class="search-bar">
+                    <input type="text" id="searchConversations" placeholder="대화 검색...">
+                </div>
+
+                <div id="conversationsList" class="conversations-list">
+                    <!-- Conversations will be loaded here -->
+                </div>
+
+                <div id="friendsList" class="friends-list hidden">
+                    <!-- Friends will be loaded here -->
+                </div>
+
+                <div class="sidebar-footer">
+                    <div class="user-info">
+                        <img id="userAvatar" src="" alt="Avatar" class="user-avatar">
+                        <div class="user-details">
+                            <div id="userName" class="user-name"></div>
+                            <div class="user-status online">온라인</div>
+                        </div>
+                    </div>
+                    <div class="sidebar-actions" style="display: flex; gap: 5px;">
+                        <button class="icon-btn" id="backupBtn" title="데이터 백업">💾</button>
+                        <button class="icon-btn" id="restoreBtn" title="데이터 복구">📂</button>
+                        <input type="file" id="restoreInput" style="display: none;" accept=".json">
+                        <button class="icon-btn" id="logoutBtn" title="로그아웃">🚪</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Area -->
+            <div class="chat-area">
+                <div id="noChatSelected" class="no-chat-selected">
+                    <div class="no-chat-icon">💬</div>
+                    <h3>대화를 선택해주세요</h3>
+                    <p>왼쪽에서 대화를 선택하거나 새 채팅을 시작하세요</p>
+                </div>
+
+                <div id="chatContainer" class="chat-container hidden">
+                    <div class="chat-header">
+                        <div class="chat-header-left">
+                            <img id="chatAvatar" src="" alt="Avatar" class="chat-avatar">
+                            <div class="chat-header-info">
+                                <div id="chatName" class="chat-name"></div>
+                                <div id="chatStatus" class="chat-status"></div>
+                            </div>
+                        </div>
+                        <div class="chat-header-actions">
+                            <div class="message-search-container" style="display: flex; align-items: center; margin-right: 10px;">
+                                <input type="text" id="messageSearchInput" placeholder="메시지 검색..." class="hidden" style="padding: 5px; border-radius: 4px; border: 1px solid var(--border-color, #e4e6eb); margin-right: 5px;">
+                                <button class="icon-btn" id="toggleSearchBtn" title="검색">🔍</button>
+                            </div>
+                            <button class="icon-btn" id="voiceCallBtn" title="음성 통화" data-i18n-title="voiceCall">📞</button>
+                            <button class="icon-btn" id="videoCallBtn" title="영상 통화" data-i18n-title="videoCall">🎥</button>
+                            <button class="icon-btn" id="chatInfoBtn" title="정보">ℹ️</button>
+                        </div>
+                    </div>
+
+                    <div id="messagesList" class="messages-list">
+                        <!-- Messages will be loaded here -->
+                    </div>
+
+                    <div id="typingIndicator" class="typing-indicator hidden">
+                        <span class="typing-dots">
+                            <span></span><span></span><span></span>
+                        </span>
+                        <span>입력 중...</span>
+                    </div>
+
+                    <div class="chat-input-container">
+                        <input type="file" id="fileInput" style="display: none;">
+                        <button class="icon-btn" id="attachBtn" title="파일 첨부">📎</button>
+                        <input type="text" id="messageInput" placeholder="메시지를 입력하세요..." autocomplete="off">
+                        <button class="btn-send" id="sendBtn" title="전송">
+                            <span>📤</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Chat Modal -->
+    <div id="newChatModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 data-i18n="newChat">새 채팅</h3>
+                <button class="close-modal" id="closeNewChatModal">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="search-bar">
+                    <input type="text" id="searchUsers" placeholder="사용자 검색...">
+                    <button class="btn-primary" id="searchUsersBtn">검색</button>
+                </div>
+                <div id="userSearchResults" class="user-search-results">
+                    <!-- Search results will appear here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Incoming Call Modal -->
+    <div id="incomingCallModal" class="modal hidden">
+        <div class="modal-content" style="max-width: 350px; text-align: center;">
+            <div class="modal-body" style="padding: 30px;">
+                <img id="callerAvatar" src="" class="conversation-avatar" style="width: 80px; height: 80px; margin-bottom: 20px;">
+                <h3 id="callerName" style="margin-bottom: 10px;">사용자</h3>
+                <p id="callTypeLabel" style="margin-bottom: 30px; color: var(--text-secondary);">영상 통화 요청 중...</p>
+                <div style="display: flex; justify-content: center; gap: 20px;">
+                    <button id="acceptCallBtn" class="btn-primary" style="background-color: #4cd964; width: 60px; height: 60px; border-radius: 50%; font-size: 24px;">📞</button>
+                    <button id="rejectCallBtn" class="btn-primary" style="background-color: #ff3b30; width: 60px; height: 60px; border-radius: 50%; font-size: 24px;">✖</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Call Modal -->
+    <div id="activeCallModal" class="modal hidden">
+        <div class="modal-content" style="max-width: 800px; width: 90%; background-color: #000;">
+            <div class="modal-header" style="border-bottom: none; position: absolute; top: 0; left: 0; right: 0; z-index: 10; color: white; background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%);">
+                <h2 id="activeCallName" style="color: white; margin: 10px;">통화 중...</h2>
+            </div>
+            <div class="modal-body" style="padding: 0; position: relative; height: 600px; display: flex; justify-content: center; align-items: center; background-color: #111;">
+                <video id="remoteVideo" autoplay style="width: 100%; height: 100%; object-fit: contain;"></video>
+                <video id="localVideo" autoplay muted style="position: absolute; bottom: 20px; right: 20px; width: 200px; height: 150px; border-radius: 10px; border: 2px solid white; object-fit: cover; background-color: #333;"></video>
+                <div id="audioOnlyPlaceholder" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; text-align: center;">
+                    <div style="font-size: 80px; margin-bottom: 20px;">📞</div>
+                    <h3>음성 통화 중</h3>
+                </div>
+                <div style="position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 20px;">
+                    <button id="endCallBtn" class="btn-primary" style="background-color: #ff3b30; width: 60px; height: 60px; border-radius: 50%; font-size: 24px;">✖</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal hidden">
+        <div class="modal-content" style="max-width: 450px;">
+            <div class="modal-header">
+                <h3>시스템 설정</h3>
+                <button class="close-modal" id="closeSettingsModal">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="settings-section">
+                    <h4>🎨 테마 설정</h4>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0;">
+                        <span>다크 모드 사용</span>
+                        <button class="btn-primary" id="modalThemeToggle" style="width: auto; padding: 5px 15px;">변경</button>
+                    </div>
+                </div>
+                <div class="settings-section" style="margin-top: 20px;">
+                    <h4>🌐 언어 설정</h4>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0;">
+                        <span>기본 언어 (KO/EN)</span>
+                        <button class="btn-primary" id="modalLangToggle" style="width: auto; padding: 5px 15px;">변경</button>
+                    </div>
+                </div>
+                <div class="settings-section" style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 20px;">
+                    <h4>🔐 보안 및 데이터</h4>
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <button class="btn-primary" id="modalBackupBtn" style="background: #4CAF50;">데이터 백업</button>
+                        <button class="btn-primary" id="modalRestoreBtn" style="background: #2196F3;">데이터 복구</button>
+                    </div>
+                </div>
+                <div style="margin-top: 30px; text-align: center;">
+                    <button id="modalLogoutBtn" style="color: #ff3b30; background: none; border: none; cursor: pointer; text-decoration: underline;">계정 로그아웃</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Settings Modal -->
+    <div id="profileModal" class="modal hidden">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <h3>프로필 설정</h3>
+                <button class="close-modal" id="closeProfileModal">×</button>
+            </div>
+            <div class="modal-body" style="text-align: center; padding: 20px;">
+                <input type="file" id="profileFileInput" style="display: none;" accept="image/*">
+                <div id="avatarEditContainer" style="position: relative; display: inline-block; margin-bottom: 20px; cursor: pointer;">
+                    <img id="editUserAvatar" src="" class="user-avatar" style="width: 100px; height: 100px;" title="사진 변경">
+                    <div style="position: absolute; bottom: 0; right: 0; background: var(--primary-color); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; pointer-events: none;">📷</div>
+                </div>
+                <div class="input-group" style="text-align: left;">
+                    <label>사용자 이름</label>
+                    <input type="text" id="editUsername" placeholder="사용자 이름">
+                </div>
+                <div class="input-group" style="text-align: left;">
+                    <label>프로필 사진 URL</label>
+                    <input type="text" id="editAvatarUrl" placeholder="이미지 URL">
+                </div>
+                <div style="margin-top: 20px;">
+                    <button class="btn-primary" id="saveProfileBtn">저장하기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div id="forgotPasswordModal" class="modal hidden">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <h3>비밀번호 찾기</h3>
+                <button class="close-modal" id="closeForgotPasswordModal">×</button>
+            </div>
+            <div class="modal-body">
+                <div id="fpStep1">
+                    <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px;">가입하신 이메일 주소를 입력하시면 인증 코드를 보내드립니다.</p>
+                    <div class="input-group">
+                        <label>이메일</label>
+                        <input type="email" id="fpEmail" placeholder="이메일 입력">
+                    </div>
+                    <button class="btn-primary" id="requestTokenBtn">인증 코드 받기</button>
+                </div>
+                <div id="fpStep2" class="hidden">
+                    <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px;">이메일로 전송된 6자리 인증 코드와 새 비밀번호를 입력해주세요.</p>
+                    <div class="input-group">
+                        <label>인증 코드</label>
+                        <input type="text" id="fpToken" placeholder="6자리 코드 입력">
+                    </div>
+                    <div class="input-group">
+                        <label>새 비밀번호</label>
+                        <input type="password" id="fpNewPassword" placeholder="새 비밀번호 입력">
+                    </div>
+                    <button class="btn-primary" id="resetPasswordBtn">비밀번호 변경</button>
+                    <div style="text-align: center; margin-top: 15px;">
+                        <a href="#" id="backToStep1" style="font-size: 13px; color: var(--text-secondary);">이메일 다시 입력하기</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.6.0/socket.io.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script src="crypto.js"></script>
+    <script src="api.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
